@@ -42,8 +42,10 @@ name: Check dependencies
 
 on:
   push:
-    paths:
-      - "setup.cfg"
+    branches:
+      - master
+    # paths:
+    #   - "setup.cfg"
 jobs:
   validate-dependencies:
     runs-on: ubuntu-latest
