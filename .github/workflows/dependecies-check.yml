@@ -25,8 +25,8 @@ jobs:
       working-directory: ${{ github.workspace }}/requirements
       run: |
         python -m pip install --upgrade pip
-        pip install -r base.txt 
-
+        pip install pipenv
+        pipenv install --dev --deploy
     - name: Run OWASP Dependency-Check
       run: |
         docker run --rm -v $(pwd):/code owasp/dependency-check --scan /code
