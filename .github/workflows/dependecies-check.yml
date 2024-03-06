@@ -1,62 +1,57 @@
-# name: Check dependencies
-
-# on:
-#   push:
-#     branches:
-#       - master
-#   # pull_request:
-#   #   branches:
-#   #     - main
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v2
-
-#     - name: Set up Python
-#       uses: actions/setup-python@v2
-#       with:
-#         python-version: '3.x'
-
-#     - name: Install dependency-check-py
-#       run: |
-#         python -m pip install --upgrade pip
-#         pip install dependency-check-py
-
-#     - name: Install dependencies
-#       run: |
-#         python -m pip install --upgrade pip
-#         pip install -r requirements.txt
-
-#     - name: Run tests
-#       run: |
-#         python -m pytest
-
-#     - name: Run dependency-check-py
-#       run: |
-#         dependency-check-py -r requirements.txt
 name: Check dependencies
 
 on:
   push:
     branches:
       - master
-    paths:
-      - "setup.cfg"
+  # pull_request:
+  #   branches:
+  #     - main
+
 jobs:
-  validate-dependencies:
+  build:
     runs-on: ubuntu-latest
-    container: quay.io/thoth-station/s2i-thoth-ubi8-py38:latest
-    name: Get Thoth recommendations on your dependencies
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Get Thoth security recommendations
-        uses: thoth-station/thoth-github-action@v0.1.1
-        with:
-          requirements-format: pipenv
-          generate-summary: true
-          ignore-cve: PYSEC-2021-94,PYSEC-2021-2
-          consider-dev-dependencies: true
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r setup.cfg
+
+    - name: Run OWASP Dependency-Check
+      run: |
+        docker run --rm -v $(pwd):/code owasp/dependency-check --scan /code
+
+    - name: Run tests
+      run: |
+        python -m pytest
+# name: Check dependencies
+
+# on:
+#   push:
+#     branches:
+#       - master
+#     paths:
+#       - "setup.cfg"
+# jobs:
+#   validate-dependencies:
+#     runs-on: ubuntu-latest
+#     container: quay.io/thoth-station/s2i-thoth-ubi8-py38:latest
+#     name: Get Thoth recommendations on your dependencies
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Get Thoth security recommendations
+#         uses: thoth-station/thoth-github-action@v0.1.1
+#         with:
+#           requirements-format: pipenv
+#           generate-summary: true
+#           ignore-cve: PYSEC-2021-94,PYSEC-2021-2
+#           consider-dev-dependencies: true
