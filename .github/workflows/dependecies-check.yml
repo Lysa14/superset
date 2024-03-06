@@ -44,8 +44,8 @@ on:
   push:
     branches:
       - master
-    # paths:
-    #   - "setup.cfg"
+    paths:
+      - "setup.cfg"
 jobs:
   validate-dependencies:
     runs-on: ubuntu-latest
