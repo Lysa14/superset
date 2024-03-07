@@ -1,43 +1,79 @@
-name: Check dependencies for security vulnerabilities
-
-on:
-  push:
-    branches:
-      - master
-  # pull_request:
-  #   branches:
-  #     - main
+name: Dependencies check
+on: [push]
 
 jobs:
-  build:
+  depchecktest:
     runs-on: ubuntu-latest
-
+    name: depecheck_test
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build project with Maven
+        run: mvn clean install
+      - name: Depcheck
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
+        with:
+          project: 'test'
+          path: '.'
+          format: 'HTML'
+          out: 'reports' 
+          args: >
+            --failOnCVSS 7
+            --enableRetired
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
+        with:
+           name: Depcheck report
+           path: ${{github.workspace}}/reports
 
 
-    - name: Run OWASP Dependency-Check
-      run: |
-        docker run --rm -v $(pwd):/code owasp/dependency-check --scan /code
 
 
-    - name: Upload Bandit report
-      uses: actions/upload-artifact@v2
-      with:
-        name: bandit-report
-        path: /src/./dependency-check-report.html
+# name: Check dependencies for security vulnerabilities
+
+# on:
+#   push:
+#     branches:
+#       - master
+#   # pull_request:
+#   #   branches:
+#   #     - main
+
+# jobs:
+  # build:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
+
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v2
+  #     with:
+  #       python-version: '3.x'
 
 
-    - name: Run bandit on Superset code
-      run: |
-        pip install bandit 
-        bandit -r ${{ github.workspace }}/superset 
+  #   - name: Run OWASP Dependency-Check
+  #     run: |
+  #       docker run --rm -v $(pwd):/code owasp/dependency-check --scan /code
+
+
+  #   - name: Upload Bandit report
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: bandit-report
+  #       path: /src/./dependency-check-report.html
+
+
+  #   - name: Run bandit on Superset code
+  #     run: |
+  #       pip install bandit 
+  #       bandit -r ${{ github.workspace }}/superset 
+
+
+
 
 
 
