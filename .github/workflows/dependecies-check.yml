@@ -27,10 +27,22 @@ jobs:
     #     python -m pip install --upgrade pip
     #     pip install pipenv
     #     pipenv install --dev --deploy
+
+
+    - name: Run bandit on Superset code
+      run: bandit -r ${{ github.workspace }}/superset
+
     - name: Run OWASP Dependency-Check
       run: |
         docker run --rm -v $(pwd):/code owasp/dependency-check --scan /code
 
+
+
+    - name: Archive Dependency-Check Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: dependency-check-report
+        path: dependency-check-report.html     
 
 # on:
 #   push:
