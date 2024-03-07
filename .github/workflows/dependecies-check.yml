@@ -1,4 +1,3 @@
-
 name: Check dependencies for security vulnerabilities
 
 on:
@@ -14,48 +13,59 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Run OWASP Dependency-Check
+        run: |
+          docker run  --rm -v $(pwd) owasp/dependency-check --scan  $(pwd)                     
+   # --volume $(pwd):/src:z \
+          # --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
+          # --volume $(pwd)/odc-reports:/report:z \
+  # --rm -v $(pwd) owasp/dependency-check --scan  $(pwd)
+
+      - name: Upload dependencies report
+        uses: actions/upload-artifact@v2
+        with:
+          name: bandit-report
+          path: $(pwd)/src/./dependency-check-report.html
+
+  security-bandit:
+
+    runs-on: ubuntu-latest
+    steps:
+     
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Run bandit on Superset code
+        run: |
+          pip install bandit 
+          bandit -r ${{ github.workspace }}/superset
 
 
-    # - name: Run OWASP Dependency-Check
-    #   run: |
-    #     docker run --rm -v $(pwd) owasp/dependency-check --scan  $(pwd)
+  pip-audit:
 
+    runs-on: ubuntu-latest
+    steps:
 
-    # - name: Upload Bandit report
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: bandit-report
-    #     path: /src/./dependency-check-report.html
-
-
-  #   - name: Run bandit on Superset code
-  #     run: |
-  #       pip install bandit 
-  #       bandit -r ${{ github.workspace }}/superset 
-
-
-  
     - uses: actions/checkout@v3
 
     - name: install
       run: |
         pip install --upgrade pip
         pip install --upgrade setuptools
-        # Installation de python3-distutils
         sudo apt-get update
         sudo apt-get install -y python3-distutils
-    
+
     - uses: pypa/gh-action-pip-audit@v1.0.8
-
-
-
-   
-
-
