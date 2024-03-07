@@ -27,16 +27,19 @@ jobs:
         docker run --rm -v $(pwd):/code owasp/dependency-check --scan /code
 
 
-    - name: Run bandit on Superset code
-      run: |
-        pip install bandit 
-        bandit -r ${{ github.workspace }}/superset 
-
     - name: Upload Bandit report
       uses: actions/upload-artifact@v2
       with:
         name: bandit-report
         path: /src/./dependency-check-report.html
+
+
+    - name: Run bandit on Superset code
+      run: |
+        pip install bandit 
+        bandit -r ${{ github.workspace }}/superset 
+
+
 
    
 
