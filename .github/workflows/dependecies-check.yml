@@ -25,7 +25,7 @@ jobs:
     - name: Run bandit on Superset code
       run: |
         pip install bandit 
-        bandit -r ${{ github.workspace }}/superset > bandit-report.txt
+        bandit -r ${{ github.workspace }}/superset -f txt -o bandit-report.txt
 
 
     - name: Archive Dependency-Check Report
