@@ -41,14 +41,17 @@ jobs:
   #       bandit -r ${{ github.workspace }}/superset 
 
 
- 
+  
     - uses: actions/checkout@v3
+
     - name: install
       run: |
         pip install --upgrade pip
         pip install --upgrade setuptools
-        pip install distutils
-      
+        # Installation de python3-distutils
+        sudo apt-get update
+        sudo apt-get install -y python3-distutils
+    
     - uses: pypa/gh-action-pip-audit@v1.0.8
 
 
