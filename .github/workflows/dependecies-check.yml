@@ -30,7 +30,9 @@ jobs:
 
 
     - name: Run bandit on Superset code
-      run: bandit -r ${{ github.workspace }}/superset
+      run: |
+        pip install bandit
+        bandit -r ${{ github.workspace }}/superset
 
     - name: Run OWASP Dependency-Check
       run: |
