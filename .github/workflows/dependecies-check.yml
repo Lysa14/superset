@@ -32,6 +32,12 @@ jobs:
         pip install bandit 
         bandit -r ${{ github.workspace }}/superset 
 
+    - name: Upload Bandit report
+      uses: actions/upload-artifact@v2
+      with:
+        name: bandit-report
+        path: /src/./dependency-check-report.html
+
    
 
 
