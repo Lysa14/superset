@@ -21,18 +21,18 @@ jobs:
       with:
         python-version: '3.x'
 
-    # - name: Install dependencies
-    #   working-directory: ${{ github.workspace }}/requirements
-    #   run: |
-    #     python -m pip install --upgrade pip
-    #     pip install pipenv
-    #     pipenv install --dev --deploy
+
+    - name: Run bandit on Superset code
+      run: |
+        pip install bandit 
+        bandit -r ${{ github.workspace }}/superset > bandit-report.txt
 
 
-    # - name: Run bandit on Superset code
-    #   run: |
-    #     pip install bandit 
-    #     bandit -r ${{ github.workspace }}/superset
+    - name: Archive Dependency-Check Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: bandit-report.txt
+        path: bandit-report.txt 
 
     - name: Run OWASP Dependency-Check
       run: |
@@ -46,23 +46,4 @@ jobs:
         name: dependency-check-report
         path: dependency-check-report.html     
 
-# on:
-#   push:
-#     branches:
-#       - master
-#     paths:
-#       - "setup.cfg"
-# jobs:
-#   validate-dependencies:
-#     runs-on: ubuntu-latest
-#     container: quay.io/thoth-station/s2i-thoth-ubi8-py38:latest
-#     name: Get Thoth recommendations on your dependencies
-#     steps:
-#       - uses: actions/checkout@v3
-#       - name: Get Thoth security recommendations
-#         uses: thoth-station/thoth-github-action@v0.1.1
-#         with:
-#           requirements-format: pipenv
-#           generate-summary: true
-#           ignore-cve: PYSEC-2021-94,PYSEC-2021-2
-#           consider-dev-dependencies: true
+
