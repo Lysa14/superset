@@ -23,23 +23,17 @@ jobs:
 
       - name: Run OWASP Dependency-Check
         run: |
-          docker run  --rm -v $(pwd) owasp/dependency-check --scan  $(pwd)                     
-   # --volume $(pwd):/src:z \
-          # --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
-          # --volume $(pwd)/odc-reports:/report:z \
-  # --rm -v $(pwd) owasp/dependency-check --scan  $(pwd)
+          docker run  --rm -v $(pwd) owasp/dependency-check --scan  $(pwd)
 
       - name: Upload dependencies report
         uses: actions/upload-artifact@v2
         with:
           name: bandit-report
-          path: $(pwd)/src/./dependency-check-report.html
+          path: $(pwd)/odc-reports
 
   security-bandit:
-
     runs-on: ubuntu-latest
     steps:
-     
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -53,19 +47,16 @@ jobs:
           pip install bandit 
           bandit -r ${{ github.workspace }}/superset
 
-
   pip-audit:
-
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
 
-    - uses: actions/checkout@v3
+      - name: install
+        run: |
+          pip install --upgrade pip
+          pip install --upgrade setuptools
+          sudo apt-get update
+          sudo apt-get install -y python3-distutils
 
-    - name: install
-      run: |
-        pip install --upgrade pip
-        pip install --upgrade setuptools
-        sudo apt-get update
-        sudo apt-get install -y python3-distutils
-
-    - uses: pypa/gh-action-pip-audit@v1.0.8
+      - uses: pypa/gh-action-pip-audit@v1.0.8
