@@ -23,9 +23,12 @@ jobs:
 
       - name: Run OWASP Dependency-Check
         run: |
-          docker run   -v $(pwd) owasp/dependency-check --scan  $(pwd)   
-          --out /. --format HTML
-          
+          mkdir -p reports  
+          docker run -v $(pwd):/app -v reports:/report owasp/dependency-check \
+            --scan /app \
+            --project "$DC_PROJECT" \
+            --out /report --format HTML
+
 
 
       - name: Upload dependencies report
