@@ -1,4 +1,4 @@
-name: Check dependencies for security vulnerabilities
+name: Check dependencies
 
 on:
   push:
@@ -23,20 +23,16 @@ jobs:
 
       - name: Run OWASP Dependency-Check
         run: |
-          mkdir -p reports  
-          docker run -v $(pwd):/app -v reports:/report owasp/dependency-check \
-            --scan /app \
-            --project "$DC_PROJECT" \
-            --out /report --format HTML
-
-
+          
+          docker run -d --name test --rm -v $(pwd) owasp/dependency-check --scan  $(pwd)
+          docker exec -it  test sh cat /report/dependency-check.html > dependency-check.html
 
       - name: Upload dependencies report
         uses: actions/upload-artifact@v2
         with:
           name: bandit-report
-          path: $(pwd)/report/dependency-check-report.html
-#odc-reports
+          path: dependency-check.html
+
   security-bandit:
     runs-on: ubuntu-latest
     steps:
