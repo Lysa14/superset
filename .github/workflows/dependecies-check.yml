@@ -28,7 +28,7 @@ jobs:
           docker exec -it  test sh cat /report/dependency-check.html > dependency-check.html
 
       - name: Upload dependencies report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: bandit-report
           path: dependency-check.html
